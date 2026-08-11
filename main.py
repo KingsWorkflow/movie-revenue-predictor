@@ -549,7 +549,7 @@ def page_exploration(df):
     with k4: st.metric("Avg ROI",     fmt_pct(df["roi"].mean()))
     with k5: st.metric("Genres",      str(df["primary_genre"].nunique()))
     st.markdown("<br>", unsafe_allow_html=True)
-    tab1,tab2,tab3,tab4 = st.tabs(["  DISTRIBUTIONS  ","  FINANCIALS  ","  STAR POWER  ","  GENRE BREAKDOWN  "])
+    tab1,tab2,tab3,tab4 = st.tabs(["  DISTRIBUTIONS  ","  FINANCIALS  ","  STAR METRICS  ","  GENRE BREAKDOWN  "])
     with tab1:
         c1,c2 = st.columns(2)
         with c1:
@@ -884,7 +884,7 @@ def main():
     elif page == "Project Brief":         page_about(df)
     st.markdown("""
     <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:4rem;padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:#64748b;letter-spacing:0.1em;">✦ STAR POWER INDEX · v1.0 · PRG-200</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:#64748b;letter-spacing:0.1em;">✦ MOVIE-REVENUE-PREDICTOR · v1.0 · PRG-200</div>
         <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:#64748b;">TEAM MARLE-G · KING'S COLLEGE NEPAL · WESTCLIFF UNIVERSITY</div>
         <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:#64748b;">⚠ ESTIMATES ONLY — NOT FINANCIAL ADVICE</div>
     </div>""", unsafe_allow_html=True)
