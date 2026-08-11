@@ -1,7 +1,7 @@
 """
 analysis.py
 -----------
-Statistical analysis helpers for the Star Power Index.
+Statistical analysis helpers for the Movie-Revenue-Predictor.
 
 Week 4 will build on this module for:
   - Multiple Linear Regression (OLS)

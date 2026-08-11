@@ -1,7 +1,7 @@
 """
 preprocessing.py
 ----------------
-Full cleaning and feature-engineering pipeline for the Star Power Index.
+Full cleaning and feature-engineering pipeline for the Movie-Revenue-Predictor.
 
 Steps performed (matching Section 3 of the Week 3 EDA document):
   1. Drop rows where budget or revenue == 0 (not genuine values)

@@ -1,7 +1,7 @@
 """
 config.py
 ---------
-Central configuration for the Star Power Index project.
+Central configuration for the Movie-Revenue-Predictor project.
 All paths, constants, and environment variables live here.
 """
 

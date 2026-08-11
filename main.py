@@ -1,10 +1,10 @@
 """
 main.py
 -------
-Star Power Index — Greenlight Tool (Professional Redesign)
+Movie-Revenue-Predictor — Greenlight Tool (Professional Redesign)
 
 Team Marle-G | King's College Nepal, Westcliff University
-Course: PRG-200 Applied Statistical Analysis | Professor: Pandey
+Course: PRG-200 Introduction to Python | Professor: Pandey
 """
 
 import sys
@@ -44,7 +44,7 @@ import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 st.set_page_config(
-    page_title="Star Power Index",
+    page_title="Movie-Revenue-Predictor",
     page_icon="✦",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -424,7 +424,7 @@ def render_sidebar(df):
         st.markdown("""
         <div class="sidebar-logo">
             <div class="logo-mark">✦ SPI</div>
-            <div class="logo-sub">Star Power Index · v1.0</div>
+            <div class="logo-sub">Movie-Revenue-Predictor · v1.0</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown('<div class="nav-label" style="padding:0.75rem 1rem 0.25rem;">Navigate</div>', unsafe_allow_html=True)
@@ -638,7 +638,7 @@ def page_model_insights(df):
     <div class="page-header">
         <div class="header-eyebrow">⊞ Model Laboratory</div>
         <div class="header-title">Statistical <span>Analysis</span></div>
-        <div class="header-desc">OLS regression, ANOVA, VIF diagnostics, and residual analysis validating the Star Power Index hypothesis.</div>
+        <div class="header-desc">OLS regression, ANOVA, VIF diagnostics, and residual analysis validating the Movie-Revenue-Predictor hypothesis.</div>
     </div>""", unsafe_allow_html=True)
 
     # ── Single source-of-truth import ──────────────────────────
@@ -789,8 +789,8 @@ def page_about(df):
     st.markdown("""
     <div class="page-header">
         <div class="header-eyebrow">◉ Project Brief</div>
-        <div class="header-title">About the <span>Star Power Index</span></div>
-        <div class="header-desc">PRG-200 Applied Statistical Analysis — Team Marle-G</div>
+        <div class="header-title">About the <span>Movie-Revenue-Predictor</span></div>
+        <div class="header-desc">PRG-200 Introduction to Python — Team Marle-G</div>
     </div>""", unsafe_allow_html=True)
     col1,col2 = st.columns([1.5,1], gap="large")
     with col1:
@@ -840,7 +840,7 @@ def page_about(df):
         <div class="card" style="margin-top:1.25rem;">
             <div class="card-title">Course Info</div>
             <div style="font-size:0.8rem;line-height:2.2;color:var(--text-dim);font-family:var(--font-mono);">
-                PRG-200 Applied Statistical Analysis<br>King's College Nepal<br>Westcliff University<br>Professor Pandey · April 2026
+                PRG-200 Introduction to Python<br>King's College Nepal<br>Westcliff University<br>Professor Pandey · April 2026
             </div>
         </div>""", unsafe_allow_html=True)
     st.markdown("---")

@@ -1,1 +1,1 @@
-# Star Power Index — src package
+# Movie-Revenue-Predictor — src package

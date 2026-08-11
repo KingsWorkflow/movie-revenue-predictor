@@ -1,7 +1,7 @@
 """
 eda.py
 ------
-Descriptive statistics and visualisations for the Star Power Index.
+Descriptive statistics and visualisations for the Movie-Revenue-Predictor.
 Reproduces every analysis described in the Week 3 EDA document.
 
 Run standalone:
@@ -344,7 +344,7 @@ def run_full_eda(df: pd.DataFrame) -> dict:
     dict with keys: 'summary_stats', 'genre_table', 'correlation_table'
     """
     print(f"\n{'='*60}")
-    print("STAR POWER INDEX — WEEK 3 EDA")
+    print("MOVIE-REVENUE-PREDICTOR — WEEK 3 EDA")
     print(f"Dataset: {len(df)} rows, {df.shape[1]} columns")
     print(f"{'='*60}")
 
