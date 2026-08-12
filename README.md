@@ -5,9 +5,6 @@
 
 > **🚨 Important:** This project requires **Python 3.10–3.11** for full compatibility. Python 3.12 may work with `statsmodels>=0.14.3`, but if you encounter import errors, consider using Python 3.11.
 
-## 📌 Research Question
-Does cast popularity (TMDB popularity score) independently predict global box office revenue, beyond what production budget alone explains?
-
 ## 🚀 Quick Start (After Setup)
 
 1. **Prepare data** — Place `tmdb_5000_movies.csv` and `tmdb_5000_credits.csv` in `data/`
