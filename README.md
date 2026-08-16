@@ -1,168 +1,66 @@
-# ⭐ Movie-Revenue-Predictor — PRG-200 Introduction to Python
+﻿# Movie Revenue Predictor - Film Revenue Forecasting
 
-**Team Marle-G** | King's College Nepal, Westcliff University  
-**Course:** PRG-200 Introduction to Python | **Professor:** Pandey
+A Streamlit app that helps film investors estimate box-office revenue from movie details.
 
-> **🚨 Important:** This project requires **Python 3.10–3.11** for full compatibility. Python 3.12 may work with `statsmodels>=0.14.3`, but if you encounter import errors, consider using Python 3.11.
+## Problem It Solves
 
-## 🚀 Quick Start (After Setup)
+Film investors spend hours building spreadsheets to estimate revenue. Movie Revenue Predictor
+lets you input movie details and instantly get a data-backed revenue forecast.
 
-1. **Prepare data** — Place `tmdb_5000_movies.csv` and `tmdb_5000_credits.csv` in `data/`
-2. **Preprocess** — `python -m src.loader && python -m src.preprocessing`
-3. **Run app** — `streamlit run main.py`
+## How to Run
 
-## 👥 Team Members
-| Name | Role |
-|---|---|
-| Anuprash Pokharel | Project Lead — timeline & final report |
-| Kabit Khadka | Statistical Analyst — ANOVA & model validation |
-| Prashanna Dhami | App Developer — Greenlight Tool |
-| Sarjyant Maharjan | Data Engineer — TMDB cleaning & feature engineering |
-| Prajit Shrestha | Research Analyst — hypothesis & literature review |
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
 
----
+Then open http://localhost:8501 in your browser.
 
-## 🗂️ Project Structure
+## Setup
+
+1. Download the [TMDB 5000 Movie Metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata) from Kaggle
+2. Place both CSVs in `data/`
+3. (Optional) Add your TMDB API key to `.env` for cast popularity enrichment
+4. Launch: `streamlit run app.py`
+
+## Features
+
+- **Home**: Overview with dataset stats and model performance
+- **Predictor**: Enter movie details to get a revenue forecast with confidence range
+- **Data Explorer**: Visualize the dataset with budget/revenue scatter, genre breakdown, and distribution
+- **Model Details**: Regression formula, performance metrics, feature importance, and limitations
+
+## Data & Model
+
+- **Dataset**: TMDB 5000 Movies + Credits (Kaggle)
+- **Model**: OLS Multiple Regression (R2 ~0.65)
+- **Features**: Budget, cast popularity, audience rating, genre
+
+## Project Structure
+
 ```
 movie-revenue-predictor/
-├── data/                   # Raw datasets (place downloaded CSV files here)
-│   ├── tmdb_5000_movies.csv
-│   └── tmdb_5000_credits.csv
-├── src/                    # Core Python modules
-│   ├── config.py           — paths, constants, TMDB API key
-│   ├── loader.py           — load & merge datasets + TMDB API calls
-│   ├── preprocessing.py    — cleaning, feature engineering pipeline
-│   ├── eda.py              — descriptive stats & visualisations
-│   ├── analysis.py         — regression, ANOVA, diagnostic tests
-│   └── app_utils.py        — helper utilities (formatters, filters)
-├── outputs/                # Generated cleaned CSV and plots
-│   └── tmdb_cleaned.csv    # ← Required for the Streamlit app
-├── notebooks/              # Jupyter notebooks
-│   └── week3_eda.ipynb     — exploratory data analysis
-├── tests/                  # Unit tests
-│   └── test_preprocessing.py
-├── main.py                 # 🚀 Streamlit Greenlight Tool
-├── requirements.txt        # Python dependencies
-├── .env.example            # environment template for TMDB API key
-└── README.md
+  app.py              # Main Streamlit app
+  data.py             # Load & clean data
+  model.py            # Load model, predict revenue, find comparable films
+  utils.py            # Formatting helpers
+  config.py           # Paths and constants
+  requirements.txt
+  .env.example
+  README.md
+  data/
+    tmdb_5000_movies.csv
+    tmdb_5000_credits.csv
+  models/
+    movie_revenue_model.joblib
+    tmdb_cleaned.csv
+  tests/
+    test_preprocessing.py
 ```
 
----
+## Limitations
 
-## ⚙️ Setup Instructions
-
-### 📦 Environment Setup (Recommended)
-
-This project uses a virtual environment. Using one is strongly recommended to avoid package conflicts.
-
-**1. Clone & navigate**
-```bash
-cd movie-revenue-predictor
-```
-
-**2. Create virtual environment**
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-**3. Install dependencies**
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-> **Python 3.12 Note:**  
-> If you encounter `TypeError: deprecate_kwarg() missing 1 required positional argument: 'new_arg_name'`,  
-> this is a known compatibility issue with `statsmodels==0.14.2` and Python 3.12.  
-> The `requirements.txt` specifies `statsmodels>=0.14.3` which resolves this.  
-> Ensure you are using a clean virtual environment with the pinned versions.
-
-### 4. Add your TMDB API key (optional for live API calls)
-```bash
-cp .env.example .env
-# Edit .env and set: TMDB_API_KEY=your_key_here
-```
-Note: The preprocessing uses cached data; API key is optional for full functionality.
-
-### 5. Download datasets from Kaggle
-Place both files inside the `data/` folder:
-- `tmdb_5000_movies.csv`
-- `tmdb_5000_credits.csv`
-
-Source: https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata
-
-### 6. Run the preprocessing pipeline
-```bash
-python -m src.loader         # Fetch cast popularity from TMDB (requires API key)
-python -m src.preprocessing   # Clean, feature engineer, save outputs/tmdb_cleaned.csv
-```
-
-### 7. Launch the Greenlight Tool
-```bash
-streamlit run main.py
-```
-
----
-
-## 📊 Project Components
-
-### Core Analysis Pipeline
-- **Data Preprocessing** (`src/preprocessing.py`) - Cleaning and feature engineering
-- **Exploratory Analysis** (`src/eda.py`) - Descriptive statistics and visualizations
-- **Statistical Modeling** (`src/analysis.py`) - Regression, ANOVA, hypothesis testing
-- **Data Loading** (`src/loader.py`) - TMDB dataset ingestion and API integration
-
-### Interactive Greenlight Tool (Streamlit App)
-**Launch:**
-```bash
-streamlit run main.py
-```
-
-The Greenlight Tool is an interactive web application that allows users to:
-
-- **Predict movie revenue** based on budget, cast popularity, expected ratings, and genre
-- **Explore the dataset** through interactive Plotly visualisations
-- **View model insights** including regression coefficients, ANOVA results, and diagnostic tests
-- **Compare** predicted movies against actual top performers
-
-**Pages:**
-1. **🎬 Movie Predictor** – Input parameters → get revenue prediction + ROI + confidence interval + success verdict
-2. **📊 Data Explorer** – Distributions, financial relationships, star power analysis, genre deep dive
-3. **📈 Model Insights** – Full regression output, VIF, ANOVA, residual diagnostics
-4. **📚 About** – Project methodology, team info, dataset overview
-
-**Prerequisite:** Run preprocessing first to generate `outputs/tmdb_cleaned.csv`.
-
----
-
-## 📊 Key Variables
-| Variable | Type | Description |
-|---|---|---|
-| `revenue` | Continuous | Global box office gross (USD) — dependent variable |
-| `budget` | Continuous | Production budget (USD) |
-| `cast_popularity_score` | Continuous | Mean TMDB popularity of top-3 billed cast |
-| `vote_average` | Continuous | Audience rating 0–10 |
-| `vote_count` | Discrete | Number of TMDB votes |
-| `genres` | Categorical | Genre labels (exploded for analysis) |
-| `roi` | Derived | (revenue − budget) / budget |
-| `log_revenue` | Derived | log1p(revenue) |
-| `log_budget` | Derived | log1p(budget) |
-| `log_cast_pop` | Derived | log1p(cast_popularity_score) |
-
----
-
-## 📅 Weekly Progress
-- **Week 1** ✅ Group formation & topic finalization
-- **Week 2** ✅ Literature review (4 peer-reviewed sources)
-- **Week 3** ✅ EDA — cleaning, visualisations, correlations
-- **Week 4** ⏳ Model selection & hypothesis development
-- **Week 5** ⏳ Statistical analysis & validation
-- **Week 6** ⏳ Statistical modelling continued
-- **Week 7** ⏳ Application development (Greenlight Tool)
-- **Week 8** ⏳ Final presentation & peer evaluation
+- Data is from pre-streaming era (2000-2016)
+- Predicts US theatrical revenue only
+- Linear model may underfit complex dynamics
+- **Not investment advice** - use as a starting point only
