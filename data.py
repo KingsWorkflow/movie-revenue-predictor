@@ -49,6 +49,31 @@ def extract_genre_names(genres_str) -> list[str]:
     return [g["name"] for g in parsed if "name" in g]
 
 
+def search_person(name: str, api_key: str | None = None) -> list[dict]:
+    """Search TMDB for people by name."""
+    key = api_key or TMDB_API_KEY
+    if not key:
+        return []
+    url = f"{TMDB_BASE_URL}/search/person"
+    try:
+        resp = requests.get(url, params={"api_key": key, "query": name}, timeout=10)
+        if resp.status_code == 200:
+            results = resp.json().get("results", [])
+            return [
+                {
+                    "id": r.get("id"),
+                    "name": r.get("name"),
+                    "popularity": r.get("popularity", 0.0),
+                    "known_for": r.get("known_for_department", ""),
+                }
+                for r in results[:10]
+                if r.get("name")
+            ]
+    except requests.RequestException:
+        pass
+    return []
+
+
 def extract_cast_names(cast_str, top_n: int = TOP_N_CAST) -> list[str]:
     parsed = _safe_parse(cast_str)
     sorted_cast = sorted(parsed, key=lambda x: x.get("order", 999))

@@ -1,4 +1,5 @@
 import io
+import os
 import textwrap
 
 import streamlit as st
@@ -8,9 +9,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import seaborn as sns
 
-from data import load_clean_data
+from data import load_clean_data, search_person
 from model import load_model, predict_revenue, find_comparable_films
-from utils import fmt_money, fmt_pct
+from utils import fmt_money, fmt_pct, fmt_multiple
 
 
 st.set_page_config(page_title="Movie Revenue Predictor", layout="wide")
@@ -59,13 +60,13 @@ def metric_card(label, value, icon, color):
 
 
 def roi_badge(roi):
-    pct = fmt_pct(roi)
+    m = fmt_multiple(roi)
     if roi > 0.8:
-        st.success(f"📈 Strong ROI: {pct}")
+        st.success(f"📈 Strong ROI: {m}")
     elif roi > 0:
-        st.warning(f"📈 Moderate ROI: {pct}")
+        st.warning(f"📈 Moderate ROI: {m}")
     else:
-        st.error(f"📈 At-Risk ROI: {pct}")
+        st.error(f"📉 At-Risk ROI: {m}")
 
 
 def build_feature_chart():
@@ -209,7 +210,56 @@ elif page == "Predictor":
             genre_input = st.selectbox("Primary Genre", genres_list)
 
         with fcol2:
-            cast_input = st.slider("Lead Actor Popularity (0–100)", min_value=0, max_value=100, value=50, help="Average TMDB popularity score of the lead cast")
+            st.markdown("##### 🔍 Lead Actor")
+
+            if "actor_results" not in st.session_state:
+                st.session_state.actor_results = []
+            if "selected_actor_pop" not in st.session_state:
+                st.session_state.selected_actor_pop = 3.8
+            if "last_actor_query" not in st.session_state:
+                st.session_state.last_actor_query = ""
+
+            TMDB_API_KEY = os.getenv("TMDB_API_KEY", "")
+            if not TMDB_API_KEY:
+                st.caption("⚠️ Add TMDB_API_KEY to .env to enable actor search. Using manual slider instead.")
+
+            actor_query = st.text_input("Search actor", placeholder="Type a name, e.g. Tom Cruise", label_visibility="collapsed", key="actor_query")
+
+            if actor_query and len(actor_query) >= 2:
+                if st.session_state.last_actor_query != actor_query:
+                    results = search_person(actor_query)
+                    st.session_state.actor_results = results
+                    st.session_state.last_actor_query = actor_query
+
+                if st.session_state.actor_results:
+                    actor_options = [f"{r['name']} ({r['known_for']}) — {r['popularity']:.1f}" for r in st.session_state.actor_results]
+                    selected_actor_str = st.selectbox(
+                        "Suggestions",
+                        actor_options,
+                        index=0,
+                        label_visibility="collapsed",
+                        key="actor_select"
+                    )
+                    selected_idx = actor_options.index(selected_actor_str)
+                    selected_actor = st.session_state.actor_results[selected_idx]
+                    st.session_state.selected_actor_pop = selected_actor["popularity"]
+                    st.caption(f"✅ Selected: **{selected_actor['name']}** — popularity: {selected_actor['popularity']:.1f}")
+                else:
+                    st.caption("No actors found. Try a different name.")
+            elif not actor_query:
+                st.session_state.actor_results = []
+                st.session_state.last_actor_query = ""
+
+            cast_input = st.slider(
+                "Lead Actor Popularity (0–20)",
+                min_value=0.0, max_value=20.0,
+                value=float(st.session_state.selected_actor_pop),
+                help="Average TMDB popularity score of the lead cast"
+            )
+            if cast_input != st.session_state.selected_actor_pop:
+                st.session_state.selected_actor_pop = cast_input
+                st.rerun()
+
             rating_input = st.slider("Expected Rating (1–10)", min_value=1.0, max_value=10.0, value=7.0, step=0.1)
 
         btn_col1, btn_col2, _ = st.columns([1, 1, 3])
@@ -221,8 +271,8 @@ elif page == "Predictor":
 
     if budget_input < 1.0:
         st.warning("⚠️ Budget under $1M is very low for a theatrical release.")
-    if cast_input < 20:
-        st.warning("⚠️ Cast popularity below 20 may indicate limited market awareness.")
+    if cast_input < 1.0:
+        st.warning("⚠️ Cast popularity below 1.0 indicates limited market awareness.")
     if rating_input < 4.0:
         st.warning("⚠️ Expected rating below 4.0 often correlates with poor audience reception.")
 
@@ -244,9 +294,7 @@ elif page == "Predictor":
         with r2:
             metric_card("Confidence Range", f"{fmt_money(lo)} – {fmt_money(hi)}", "📊", SKY)
         with r3:
-            roi_low = max(0.0, roi - 0.3)
-            roi_high = roi + 0.3
-            metric_card("ROI Range", f"{fmt_pct(roi_low)} – {fmt_pct(roi_high)}", "📈", GOLD)
+            metric_card("ROI Range", f"{fmt_multiple(result['roi_lower'])} – {fmt_multiple(result['roi_upper'])}", "📈", GOLD)
 
         badge_col, info_col = st.columns([1, 2])
         with badge_col:
@@ -265,15 +313,21 @@ elif page == "Predictor":
 
         csv_buf = io.StringIO()
         report_df = pd.DataFrame([{
-            "Predicted Revenue": fmt_money(rev),
-            "CI Lower": fmt_money(lo),
-            "CI Upper": fmt_money(hi),
-            "ROI": fmt_pct(roi),
-            "Title": title_input or "Untitled",
-            "Budget ($M)": budget_input,
-            "Genre": genre_input,
-            "Cast Popularity": cast_input,
-            "Expected Rating": rating_input,
+            "predicted_revenue": rev,
+            "ci_lower": lo,
+            "ci_upper": hi,
+            "roi": roi,
+            "roi_multiple": result["roi"],
+            "roi_lower_multiple": result["roi_lower"],
+            "roi_upper_multiple": result["roi_upper"],
+            "roi_pct": result["roi"] * 100,
+            "roi_lower_pct": result["roi_lower"] * 100,
+            "roi_upper_pct": result["roi_upper"] * 100,
+            "title": title_input or "Untitled",
+            "budget_usd": budget_input * 1e6,
+            "genre": genre_input,
+            "cast_popularity": cast_input,
+            "expected_rating": rating_input,
         }])
         report_df.to_csv(csv_buf, index=False)
         st.download_button(
