@@ -1,4 +1,4 @@
-﻿import numpy as np
+import numpy as np
 import pandas as pd
 import joblib
 import streamlit as st
@@ -39,19 +39,25 @@ def predict_revenue(model: dict, budget: float, cast_pop: float,
         ci_upper = float(np.expm1(ci[0][1]))
         mlabel   = "full"
     except Exception:
-        rev      = float(np.expm1(model_full.predict(inp)[0]))
-        ci_lower = rev * 0.7
-        ci_upper = rev * 1.3
-        mlabel   = "simple"
+        model_simple = payload["model_simple"]
+        log_pred     = model_simple.predict(inp)[0]
+        rev          = float(np.expm1(log_pred))
+        ci_lower     = rev * 0.6
+        ci_upper     = rev * 1.4
+        mlabel       = "simple"
 
-    roi = (rev - budget) / budget
+    roi       = (rev - budget) / budget
+    roi_lower = (ci_lower - budget) / budget
+    roi_upper = (ci_upper - budget) / budget
 
     return {
-        "revenue":  rev,
-        "ci_lower": ci_lower,
-        "ci_upper": ci_upper,
-        "roi":      roi,
-        "model":    mlabel,
+        "revenue":   rev,
+        "ci_lower":  ci_lower,
+        "ci_upper":  ci_upper,
+        "roi":       roi,
+        "roi_lower": roi_lower,
+        "roi_upper": roi_upper,
+        "model":     mlabel,
     }
 
 
